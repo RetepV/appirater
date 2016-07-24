@@ -269,33 +269,49 @@ static BOOL _alwaysUseMainBundle = NO;
 }
 
 - (void)showRatingAlert:(BOOL)displayRateLaterButton {
-  UIAlertView *alertView = nil;
-  id <AppiraterDelegate> delegate = _delegate;
-    
-  if(delegate && [delegate respondsToSelector:@selector(appiraterShouldDisplayAlert:)] && ![delegate appiraterShouldDisplayAlert:self]) {
-      return;
-  }
-  
-  if (displayRateLaterButton) {
-  	alertView = [[UIAlertView alloc] initWithTitle:self.alertTitle
-                                           message:self.alertMessage
-                                          delegate:self
-                                 cancelButtonTitle:self.alertCancelTitle
-                                 otherButtonTitles:self.alertRateTitle, self.alertRateLaterTitle, nil];
-  } else {
-  	alertView = [[UIAlertView alloc] initWithTitle:self.alertTitle
-                                           message:self.alertMessage
-                                          delegate:self
-                                 cancelButtonTitle:self.alertCancelTitle
-                                 otherButtonTitles:self.alertRateTitle, nil];
-  }
+	UIAlertController *alertView = nil;
+	id <AppiraterDelegate> delegate = _delegate;
+
+	if(delegate && [delegate respondsToSelector:@selector(appiraterShouldDisplayAlert:)] && ![delegate appiraterShouldDisplayAlert:self]) {
+	  return;
+	}
+	
+	alertView = [UIAlertController alertControllerWithTitle:self.alertTitle message:self.alertMessage preferredStyle:UIAlertControllerStyleAlert];
+	[alertView addAction:[UIAlertAction actionWithTitle:self.alertRateTitle style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+		// they want to rate it
+		[Appirater rateApp];
+		if(delegate && [delegate respondsToSelector:@selector(appiraterDidOptToRate:)]){
+			[delegate appiraterDidOptToRate:self];
+		}
+	}]];
+	if (displayRateLaterButton) {
+		[alertView addAction:[UIAlertAction actionWithTitle:self.alertRateLaterTitle style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+			// remind them later
+			NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+			[userDefaults setDouble:[[NSDate date] timeIntervalSince1970] forKey:kAppiraterReminderRequestDate];
+			[userDefaults synchronize];
+			if(delegate && [delegate respondsToSelector:@selector(appiraterDidOptToRemindLater:)]){
+				[delegate appiraterDidOptToRemindLater:self];
+			}
+		}]];
+	}
+	[alertView addAction:[UIAlertAction actionWithTitle:self.alertCancelTitle style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+		// they don't want to rate it
+		NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+		[userDefaults setBool:YES forKey:kAppiraterDeclinedToRate];
+		[userDefaults synchronize];
+		if(delegate && [delegate respondsToSelector:@selector(appiraterDidDeclineToRate:)]){
+			[delegate appiraterDidDeclineToRate:self];
+		}
+	}]];
 
 	self.ratingAlert = alertView;
-    [alertView show];
+	UIViewController * vc = (UIViewController *)[Appirater getRootViewController];
+	[vc presentViewController:self.ratingAlert animated:true completion:nil];
 
-    if (delegate && [delegate respondsToSelector:@selector(appiraterDidDisplayAlert:)]) {
-             [delegate appiraterDidDisplayAlert:self];
-    }
+	if (delegate && [delegate respondsToSelector:@selector(appiraterDidDisplayAlert:)]) {
+			 [delegate appiraterDidDisplayAlert:self];
+	}
 }
 
 - (void)showRatingAlert
@@ -318,7 +334,7 @@ static BOOL _alwaysUseMainBundle = NO;
 - (BOOL)ratingAlertIsAppropriate {
     return ([self connectedToNetwork]
             && ![self userHasDeclinedToRate]
-            && !self.ratingAlert.visible
+            && !self.ratingAlert.presentingViewController
             && ![self userHasRatedCurrentVersion]);
 }
 
@@ -521,10 +537,10 @@ static BOOL _alwaysUseMainBundle = NO;
 }
 
 - (void)hideRatingAlert {
-	if (self.ratingAlert.visible) {
+	if (self.ratingAlert.presentingViewController) {
 		if (_debug)
 			NSLog(@"APPIRATER Hiding Alert");
-		[self.ratingAlert dismissWithClickedButtonIndex:-1 animated:NO];
+		[self.ratingAlert.presentingViewController dismissViewControllerAnimated:true completion:nil];
 	}	
 }
 

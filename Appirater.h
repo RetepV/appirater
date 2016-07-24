@@ -87,10 +87,10 @@ extern NSString *const kAppiraterReminderRequestDate;
 
 @interface Appirater : NSObject <UIAlertViewDelegate, SKStoreProductViewControllerDelegate> {
 
-	UIAlertView		*ratingAlert;
+	UIAlertController		*ratingAlert;
 }
 
-@property(nonatomic, strong) UIAlertView *ratingAlert;
+@property(nonatomic, strong) UIAlertController *ratingAlert;
 @property(nonatomic) BOOL openInAppStore;
 #if __has_feature(objc_arc_weak)
 @property(nonatomic, weak) NSObject <AppiraterDelegate> *delegate;
