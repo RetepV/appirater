@@ -144,6 +144,14 @@ extern NSString *const kAppiraterReminderRequestDate;
 + (void)userDidSignificantEvent:(BOOL)canPromptForRating;
 
 /*!
+ Returns a boolean value telling us if all the conditions have been met to
+ show the prompt. I.e. if the rating alert has been postponed by passing NO
+ to canPromptForRating in appLaunched, appEnteredForeground and
+ userDidSignificantEvent.
+ */
++ (BOOL)willShowRatingPrompt;
+
+/*!
  Tells Appirater to try and show the prompt (a rating alert). The prompt will be showed
  if there is connection available, the user hasn't declined to rate
  or hasn't rated current version.

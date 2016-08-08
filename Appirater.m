@@ -76,10 +76,10 @@ static BOOL _alwaysUseMainBundle = NO;
 @property (nonatomic, copy) NSString *alertCancelTitle;
 @property (nonatomic, copy) NSString *alertRateTitle;
 @property (nonatomic, copy) NSString *alertRateLaterTitle;
+
 - (BOOL)connectedToNetwork;
 + (Appirater*)sharedInstance;
-- (void)showPromptWithChecks:(BOOL)withChecks
-      displayRateLaterButton:(BOOL)displayRateLaterButton;
+- (void)showPromptWithChecks:(BOOL)withChecks displayRateLaterButton:(BOOL)displayRateLaterButton;
 - (void)showRatingAlert:(BOOL)displayRateLaterButton;
 - (void)showRatingAlert;
 - (BOOL)ratingAlertIsAppropriate;
@@ -562,6 +562,10 @@ static BOOL _alwaysUseMainBundle = NO;
                    ^{
                        [[Appirater sharedInstance] incrementSignificantEventAndRate:canPromptForRating];
                    });
+}
+
++ (BOOL)willShowRatingPrompt {
+    return [[Appirater sharedInstance] ratingConditionsHaveBeenMet] && [[Appirater sharedInstance] ratingAlertIsAppropriate];
 }
 
 #pragma GCC diagnostic push
