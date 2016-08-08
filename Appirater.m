@@ -277,6 +277,7 @@ static BOOL _alwaysUseMainBundle = NO;
 	}
 	
 	alertView = [UIAlertController alertControllerWithTitle:self.alertTitle message:self.alertMessage preferredStyle:UIAlertControllerStyleAlert];
+    alertView.view.tintColor = [UIColor blackColor];
 	[alertView addAction:[UIAlertAction actionWithTitle:self.alertRateTitle style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
 		// they want to rate it
 		[Appirater rateApp];
