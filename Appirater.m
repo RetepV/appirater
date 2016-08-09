@@ -333,11 +333,6 @@ static BOOL _alwaysUseMainBundle = NO;
 	}
 }
 
-- (void)showRatingAlert
-{
-  [self showRatingAlert:true];
-}
-
 // is this an ok time to show the alert? (regardless of whether the rating conditions have been met)
 //
 // things checked here:
