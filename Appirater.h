@@ -283,7 +283,7 @@ extern NSString *const kAppiraterReminderRequestDate;
 /*!
  Display or don't display the No Thanks button.
  */
-+ (void)setDisplayNoThanksButton:(BOOL)display
++ (void)setDisplayNoThanksButton:(BOOL)display;
 
 /*!
  'YES' will show the Appirater alert everytime. Useful for testing how your message
