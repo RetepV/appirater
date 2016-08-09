@@ -77,10 +77,12 @@ static BOOL _alwaysUseMainBundle = NO;
 @property (nonatomic, copy) NSString *alertRateTitle;
 @property (nonatomic, copy) NSString *alertRateLaterTitle;
 
+@property (nonatomic, assign) BOOL displayRateLaterButton;
+@property (nonatomic, assign) BOOL displayNoThanksButton;
+
 - (BOOL)connectedToNetwork;
 + (Appirater*)sharedInstance;
-- (void)showPromptWithChecks:(BOOL)withChecks displayRateLaterButton:(BOOL)displayRateLaterButton;
-- (void)showRatingAlert:(BOOL)displayRateLaterButton;
+- (void)showPromptWithChecks:(BOOL)withChecks;
 - (void)showRatingAlert;
 - (BOOL)ratingAlertIsAppropriate;
 - (BOOL)ratingConditionsHaveBeenMet;
@@ -135,6 +137,16 @@ static BOOL _alwaysUseMainBundle = NO;
 + (void) setCustomAlertRateLaterButtonTitle:(NSString *)rateLaterTitle
 {
     [self sharedInstance].alertRateLaterTitle = rateLaterTitle;
+}
+
++ (void)setDisplayRateLaterButton:(BOOL)display
+{
+    [self sharedInstance].displayRateLaterButton = display;
+}
+
++ (void)setDisplayNoThanksButton:(BOOL)display
+{
+    [self sharedInstance].displayNoThanksButton = display;
 }
 
 + (void) setDebug:(BOOL)debug {
@@ -211,10 +223,12 @@ static BOOL _alwaysUseMainBundle = NO;
 - (id)init {
     self = [super init];
     if (self) {
+        _displayRateLaterButton = YES;
+        _displayNoThanksButton = YES;
         if ([[UIDevice currentDevice].systemVersion floatValue] >= 7.0) {
-            self.openInAppStore = YES;
+            _openInAppStore = YES;
         } else {
-            self.openInAppStore = NO;
+            _openInAppStore = NO;
         }
     }
     
@@ -268,7 +282,7 @@ static BOOL _alwaysUseMainBundle = NO;
 	return appirater;
 }
 
-- (void)showRatingAlert:(BOOL)displayRateLaterButton {
+- (void)showRatingAlert {
 	UIAlertController *alertView = nil;
 	id <AppiraterDelegate> delegate = _delegate;
 
@@ -285,8 +299,10 @@ static BOOL _alwaysUseMainBundle = NO;
 			[delegate appiraterDidOptToRate:self];
 		}
 	}]];
-	if (displayRateLaterButton) {
-		[alertView addAction:[UIAlertAction actionWithTitle:self.alertRateLaterTitle style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+	if (self.displayRateLaterButton) {
+		[alertView addAction:[UIAlertAction actionWithTitle:self.alertRateLaterTitle
+                                                      style: self.displayNoThanksButton ? UIAlertActionStyleDefault : UIAlertActionStyleCancel
+                                                    handler:^(UIAlertAction * _Nonnull action) {
 			// remind them later
 			NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
 			[userDefaults setDouble:[[NSDate date] timeIntervalSince1970] forKey:kAppiraterReminderRequestDate];
@@ -296,15 +312,17 @@ static BOOL _alwaysUseMainBundle = NO;
 			}
 		}]];
 	}
-	[alertView addAction:[UIAlertAction actionWithTitle:self.alertCancelTitle style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
-		// they don't want to rate it
-		NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
-		[userDefaults setBool:YES forKey:kAppiraterDeclinedToRate];
-		[userDefaults synchronize];
-		if(delegate && [delegate respondsToSelector:@selector(appiraterDidDeclineToRate:)]){
-			[delegate appiraterDidDeclineToRate:self];
-		}
-	}]];
+    if (self.displayNoThanksButton) {
+        [alertView addAction:[UIAlertAction actionWithTitle:self.alertCancelTitle style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+            // they don't want to rate it
+            NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+            [userDefaults setBool:YES forKey:kAppiraterDeclinedToRate];
+            [userDefaults synchronize];
+            if(delegate && [delegate respondsToSelector:@selector(appiraterDidDeclineToRate:)]){
+                [delegate appiraterDidDeclineToRate:self];
+            }
+        }]];
+    }
 
 	self.ratingAlert = alertView;
 	UIViewController * vc = (UIViewController *)[Appirater getRootViewController];
@@ -577,19 +595,16 @@ static BOOL _alwaysUseMainBundle = NO;
 #pragma GCC diagnostic pop
 
 + (void)tryToShowPrompt {
-  [[Appirater sharedInstance] showPromptWithChecks:true
-                            displayRateLaterButton:true];
+  [[Appirater sharedInstance] showPromptWithChecks:true];
 }
 
-+ (void)forceShowPrompt:(BOOL)displayRateLaterButton {
-  [[Appirater sharedInstance] showPromptWithChecks:false
-                            displayRateLaterButton:displayRateLaterButton];
++ (void)forceShowPrompt {
+  [[Appirater sharedInstance] showPromptWithChecks:false];
 }
 
-- (void)showPromptWithChecks:(BOOL)withChecks
-      displayRateLaterButton:(BOOL)displayRateLaterButton {
+- (void)showPromptWithChecks:(BOOL)withChecks {
   if (withChecks == NO || [self ratingAlertIsAppropriate]) {
-    [self showRatingAlert:displayRateLaterButton];
+    [self showRatingAlert];
   }
 }
 

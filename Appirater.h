@@ -170,7 +170,7 @@ extern NSString *const kAppiraterReminderRequestDate;
  explicit "Rate this app" command somewhere. This is similar to rateApp,
  but instead of jumping to the review directly, an intermediary prompt is displayed.
  */
-+ (void)forceShowPrompt:(BOOL)displayRateLaterButton;
++ (void)forceShowPrompt;
 
 /*!
  Tells Appirater to open the App Store page where the user can specify a
@@ -274,6 +274,16 @@ extern NSString *const kAppiraterReminderRequestDate;
  Set customized rate later button title for alert view.
  */
 + (void) setCustomAlertRateLaterButtonTitle:(NSString *)rateLaterTitle;
+
+/*!
+ Display or don't display the Rate Later button.
+ */
++ (void)setDisplayRateLaterButton:(BOOL)display;
+
+/*!
+ Display or don't display the No Thanks button.
+ */
++ (void)setDisplayNoThanksButton:(BOOL)display
 
 /*!
  'YES' will show the Appirater alert everytime. Useful for testing how your message
