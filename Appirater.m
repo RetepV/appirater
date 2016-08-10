@@ -367,6 +367,12 @@ static BOOL _alwaysUseMainBundle = NO;
 - (BOOL)ratingConditionsHaveBeenMet {
 	if (_debug)
 		return YES;
+    
+    // Give our delegate the chance to update conditions before checking them.
+    id <AppiraterDelegate> delegate = _delegate;
+    if (delegate && [delegate respondsToSelector:@selector(appiraterWillCheckConditions:)]) {
+        [delegate appiraterWillCheckConditions:self];
+    }
 	
 	NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
 	
