@@ -242,13 +242,12 @@ extern NSString *const kAppiraterReminderRequestDate;
  */
 + (void) setSignificantEventsUntilPrompt:(NSInteger)value;
 
-
 /*!
  Once the rating alert is presented to the user, they might select
  'Remind me later'. This value specifies how long (in days) Appirater
  will wait before reminding them.
  */
-+ (void) setTimeBeforeReminding:(double)value;
++ (void) setDaysBeforeReminding:(double)value;
 
 /*!
  Set customized title for alert view.

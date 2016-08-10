@@ -58,7 +58,7 @@ static NSString *_appId;
 static double _daysUntilPrompt = 30;
 static NSInteger _usesUntilPrompt = 20;
 static NSInteger _significantEventsUntilPrompt = -1;
-static double _timeBeforeReminding = 1;
+static double _daysBeforeReminding = 1;
 static BOOL _debug = NO;
 #if __IPHONE_OS_VERSION_MIN_REQUIRED < __IPHONE_5_0
 	static id<AppiraterDelegate> _delegate;
@@ -110,8 +110,8 @@ static BOOL _alwaysUseMainBundle = NO;
     _significantEventsUntilPrompt = value;
 }
 
-+ (void) setTimeBeforeReminding:(double)value {
-    _timeBeforeReminding = value;
++ (void) setDaysBeforeReminding:(double)value {
+    _daysBeforeReminding = value;
 }
 
 + (void) setCustomAlertTitle:(NSString *)title
@@ -395,7 +395,7 @@ static BOOL _alwaysUseMainBundle = NO;
 	// if the user wanted to be reminded later, has enough time passed?
 	NSDate *reminderRequestDate = [NSDate dateWithTimeIntervalSince1970:[userDefaults doubleForKey:kAppiraterReminderRequestDate]];
 	NSTimeInterval timeSinceReminderRequest = [[NSDate date] timeIntervalSinceDate:reminderRequestDate];
-	NSTimeInterval timeUntilReminder = 60 * 60 * 24 * _timeBeforeReminding;
+	NSTimeInterval timeUntilReminder = 60 * 60 * 24 * _daysBeforeReminding;
 	if (timeSinceReminderRequest < timeUntilReminder)
 		return NO;
 	
