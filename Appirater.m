@@ -45,6 +45,7 @@
 NSString *const kAppiraterFirstUseDate                  = @"kAppiraterFirstUseDate";
 NSString *const kAppiraterUseCount                      = @"kAppiraterUseCount";
 NSString *const kAppiraterSignificantEventCount         = @"kAppiraterSignificantEventCount";
+NSString *const kAppiraterDateAlertWasShown             = @"kAppiraterDateAlertWasShown";
 NSString *const kAppiraterCurrentVersion                = @"kAppiraterCurrentVersion";
 NSString *const kAppiraterRatedCurrentVersion           = @"kAppiraterRatedCurrentVersion";
 NSString *const kAppiraterDateCurrentVersionWasRated    = @"kAppiraterDateCurrentVersionWasRated";
@@ -316,6 +317,10 @@ static BOOL _alwaysUseMainBundle = NO;
         return;
     }
     
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    [userDefaults setDouble:[[NSDate date] timeIntervalSince1970] forKey:kAppiraterDateAlertWasShown];
+    [userDefaults synchronize];
+    
     alertView = [AppiraterUIAlertController alertControllerWithTitle:self.alertTitle message:self.alertMessage preferredStyle:UIAlertControllerStyleAlert];
     alertView.view.tintColor = [UIColor blackColor];
     [alertView addAction:[UIAlertAction actionWithTitle:self.alertRateTitle style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
@@ -505,6 +510,7 @@ static BOOL _alwaysUseMainBundle = NO;
         [userDefaults setDouble:0 forKey:kAppiraterFirstUseDate];
         [userDefaults setInteger:0 forKey:kAppiraterUseCount];
         [userDefaults setInteger:1 forKey:kAppiraterSignificantEventCount];
+        [userDefaults setDouble:0 forKey:kAppiraterDateAlertWasShown];
         [userDefaults setBool:NO forKey:kAppiraterRatedCurrentVersion];
         [userDefaults setBool:NO forKey:kAppiraterDeclinedToRate];
         [userDefaults setDouble:0 forKey:kAppiraterDateCurrentVersionWasRated];
@@ -571,6 +577,12 @@ static BOOL _alwaysUseMainBundle = NO;
                            [self showRatingAlert];
                        });
     }
+}
+
++ (NSDate*)dateRatingAlertWasShown
+{
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    return ([userDefaults objectForKey:kAppiraterDateAlertWasShown] != nil) ? [NSDate dateWithTimeIntervalSince1970:[userDefaults doubleForKey:kAppiraterDateAlertWasShown]] : nil;
 }
 
 + (BOOL)userHasDeclinedToRate {

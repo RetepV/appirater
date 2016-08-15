@@ -191,6 +191,11 @@ extern NSString *const kAppiraterReminderRequestDate;
 + (void)closeModal;
 
 /*!
+ Asks Appirater when the Rating alert was shown (if it was not, it returns nil)
+ */
++ (NSDate*)dateRatingAlertWasShown;
+
+/*!
  Asks Appirater if the user has declined to rate;
  */
 + (BOOL)userHasDeclinedToRate;
