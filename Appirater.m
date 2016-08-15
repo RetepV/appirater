@@ -73,6 +73,25 @@ static UIStatusBarStyle _statusBarStyle;
 static BOOL _modalOpen = false;
 static BOOL _alwaysUseMainBundle = NO;
 
+#pragma mark - AppiraterUIAlertController override
+
+// We need to override UIAlertController to make sure that the text color for
+// the buttons is painted black.
+
+@interface AppiraterUIAlertController : UIAlertController
+@end
+
+@implementation AppiraterUIAlertController
+
+-(void)viewWillLayoutSubviews {
+    [super viewWillLayoutSubviews];
+    self.view.tintColor = [UIColor blackColor];
+}
+
+@end
+
+#pragma mark - Appirater class
+
 @interface Appirater ()
 @property (nonatomic, copy) NSString *alertTitle;
 @property (nonatomic, copy) NSString *alertMessage;
@@ -290,14 +309,14 @@ static BOOL _alwaysUseMainBundle = NO;
 }
 
 - (void)showRatingAlert {
-    UIAlertController *alertView = nil;
+    AppiraterUIAlertController *alertView = nil;
     id <AppiraterDelegate> delegate = _delegate;
     
     if(delegate && [delegate respondsToSelector:@selector(appiraterShouldDisplayAlert:)] && ![delegate appiraterShouldDisplayAlert:self]) {
         return;
     }
     
-    alertView = [UIAlertController alertControllerWithTitle:self.alertTitle message:self.alertMessage preferredStyle:UIAlertControllerStyleAlert];
+    alertView = [AppiraterUIAlertController alertControllerWithTitle:self.alertTitle message:self.alertMessage preferredStyle:UIAlertControllerStyleAlert];
     alertView.view.tintColor = [UIColor blackColor];
     [alertView addAction:[UIAlertAction actionWithTitle:self.alertRateTitle style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         // they want to rate it
