@@ -376,9 +376,9 @@ static BOOL _alwaysUseMainBundle = NO;
 // * time since last reminder
 - (BOOL)ratingAlertIsAppropriate {
     return ([self connectedToNetwork]
-            && ![self userHasDeclinedToRate]
+            && ![Appirater userHasDeclinedToRate]
             && !self.ratingAlert.presentingViewController
-            && ![self userHasRatedCurrentVersion]);
+            && ![Appirater userHasRatedCurrentVersion]);
 }
 
 // have the rating conditions been met/earned? (regardless of whether this would be a moment when it's appropriate to show a new rating alert)
@@ -573,11 +573,11 @@ static BOOL _alwaysUseMainBundle = NO;
     }
 }
 
-- (BOOL)userHasDeclinedToRate {
++ (BOOL)userHasDeclinedToRate {
     return [[NSUserDefaults standardUserDefaults] boolForKey:kAppiraterDeclinedToRate];
 }
 
-- (BOOL)userHasRatedCurrentVersion {
++ (BOOL)userHasRatedCurrentVersion {
     return [[NSUserDefaults standardUserDefaults] boolForKey:kAppiraterRatedCurrentVersion];
 }
 
