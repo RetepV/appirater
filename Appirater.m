@@ -86,7 +86,8 @@ static BOOL _alwaysUseMainBundle = NO;
 
 -(void)viewWillLayoutSubviews {
     [super viewWillLayoutSubviews];
-    self.view.tintColor = [UIColor blackColor];
+    // iOS7 and up uses this color for button text tint color.
+    self.view.tintColor = [UIColor colorWithRed:0 green:0.478431 blue:1.0 alpha:1.0];
 }
 
 @end
