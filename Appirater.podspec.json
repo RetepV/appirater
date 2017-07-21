@@ -1,6 +1,6 @@
 {
   "name": "Appirater",
-  "version": "2.0.5",
+  "version": "2.0.6",
   "platforms": {
     "ios": "5.0"
   },
@@ -10,8 +10,8 @@
     "Arash Payan": "arash@ara.sh"
   },
   "source": {
-    "git": "https://github.com/arashpayan/appirater.git",
-    "tag": "2.0.5"
+    "git": "git@git.vpc.getqardio.com:ios/Appirater.git",
+    "tag": "2.0.6"
   },
   "source_files": "*.{h,m}",
   "resource_bundles": {
