@@ -335,7 +335,7 @@ static BOOL _alwaysUseMainBundle = NO;
     }]];
     if (self.displayRateLaterButton) {
         [alertView addAction:[UIAlertAction actionWithTitle:self.alertRateLaterTitle
-                                                      style: self.displayNoThanksButton ? UIAlertActionStyleDefault : UIAlertActionStyleCancel
+                                                      style: UIAlertActionStyleDefault
                                                     handler:^(UIAlertAction * _Nonnull action) {
                                                         // remind them later
                                                         NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
@@ -347,7 +347,7 @@ static BOOL _alwaysUseMainBundle = NO;
                                                     }]];
     }
     if (self.displayNoThanksButton) {
-        [alertView addAction:[UIAlertAction actionWithTitle:self.alertCancelTitle style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+        [alertView addAction:[UIAlertAction actionWithTitle:self.alertCancelTitle style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             // they don't want to rate it
             NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
             [userDefaults setBool:YES forKey:kAppiraterDeclinedToRate];
